@@ -18,11 +18,19 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// public files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/assets/vendor/bootstrap',express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
+app.use('/assets/vendor/popper.js',express.static(path.join(__dirname, 'node_modules', 'popper.js', 'dist', 'umd')));
+app.use('/assets/vendor/jquery',express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')));
+app.use('/assets/vendor/feather-icons',express.static(path.join(__dirname, 'node_modules', 'feather-icons', 'dist')));
+
 
 // routers
 app.use('/', indexRouter);
 app.use('/notes', notesRouter);
+
 
 // 修改了处理404的代码。创建一个新的Error对象并且设置status code
 app.use(function (req, res, next) {
