@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { notesStore } = require('../models/notes-memory');
-
+const debug = require('debug')('notes:debug');
+const debugError = require('debug')('notes:error');
 
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
+  debug("Index!!");
+  debugError("IndexEEEEE!");
   try {
     const keylist = await notesStore.keylist();
     // 返回多个Promises

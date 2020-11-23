@@ -4,17 +4,29 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
+const rfs = require('rotating-file-stream');
 const hbs = require('hbs');
+
 const indexRouter = require('./routes/index');
 const notesRouter  = require('./routes/notes');
 const app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 hbs.registerPartials(path.join(__dirname, 'partials'));
 
-app.use(logger('dev'));
+// 配置log，并且使用了log rotation
+app.use(logger(process.env.REQUEST_LOG_FORMAT || 'dev', {
+  stream: process.env.REQUEST_LOG_FILE ? 
+    // 让rfs来管理文件流，进行rotation
+    rfs.createStream(process.env.REQUEST_LOG_FILE, {
+      size: '10M',  // 每10M进行一次rotation
+      interval: '1d',  // 每天进行
+      compress: 'gzip' 
+    }) : process.stdout
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
