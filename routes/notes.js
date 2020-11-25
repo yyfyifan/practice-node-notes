@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const { notesStore } = require('../models/notes-memory');
+const { ensureAuthenticated } = require("./users");
 
-router.get('/add', (req, res, next) => {
+router.get('/add', ensureAuthenticated, (req, res, next) => {
     res.render('noteedit', {
         title: "Add a Note",
         docreate: true,
         notekey: "",
+        user: req.user,
         note: undefined
     });
 });
@@ -16,6 +18,7 @@ router.get('/view', async (req, res, next) => {
         res.render('noteview', {
             title: note ? note.title : "",
             notekey: req.query.key,
+            user: req.user ? req.user : undefined,
             note: note
         });
     } catch (err) {
@@ -23,13 +26,14 @@ router.get('/view', async (req, res, next) => {
     }
 });
 
-router.get('/edit', async (req, res, next) => {
+router.get('/edit', ensureAuthenticated, async (req, res, next) => {
     try {
         const note = await notesStore.read(req.query.key);
         res.render('noteedit', {
             title: note ? ("Edit " + note.title) : "Add a Note",
             docreate: false,
             notekey: req.query.key,
+            user: req.user,
             note: note
         });
     } catch (err) {
@@ -38,7 +42,7 @@ router.get('/edit', async (req, res, next) => {
 
 });
 
-router.post('/save', async (req, res, next) => {
+router.post('/save', ensureAuthenticated, async (req, res, next) => {
     console.log(req.body);
     try {
         let note;
@@ -54,24 +58,25 @@ router.post('/save', async (req, res, next) => {
     }
 });
 
-router.get('/destroy', async (req, res, next) => {
+router.get('/destroy', ensureAuthenticated, async (req, res, next) => {
     try {
         const note = await notesStore.read(req.query.key);
         res.render('notedestroy', {
             title: note ? note.title : "",
             notekey: req.query.key,
-            note: note
+            note: note,
+            user: req.user
         });
     } catch (err) {
         next(err);
     }
 });
 
-router.post('/destroy', async (req, res, next) => {
+router.post('/destroy', ensureAuthenticated, async (req, res, next) => {
     try {
         await notesStore.destroy(req.body.notekey);
         res.redirect('/');
-    } catch(err) {
+    } catch (err) {
         next(err);
     }
 });

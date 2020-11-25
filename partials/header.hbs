@@ -3,20 +3,29 @@
         <a href="/" class="navbar-brand">
             <i data-feather="home"></i>
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-        data-target="#navbarSupportedContent">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarLogIn">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <span class="navbar-text col">{{title}}</span>
+        {{#if user}}
+        <div class="collapse navbar-collapse" id="navbarLogIn">
+            <span class="navbar-text text-dark col">{{title}}</span>
             {{!-- <div class="navbar-nav col">
-                {{#if breadcrumb}}
-                <a href="{{breadcrumb.url}}" class="nav-item nav-link">
-                    {{breadcrumb.title}}
-                </a>
-                {{/if}}
-            </div> --}}
+                    {{#if breadcrumb}}
+                    <a href="{{breadcrumb.url}}" class="nav-item nav-link">
+                        {{breadcrumb.title}}
+                    </a>
+                    {{/if}}
+                </div> --}}
+            <a href="/users/logout" class="btn btn-dark col-auto">
+                Log Oout <span class="badge badge-light">{{user.username}}</span>
+            </a>
             <a href="/notes/add" class="nav-item nav-link btn btn-light col-auto">Add Note</a>
         </div>
+        {{else}}
+        <div class="collapse navbar-collapse" id="navbarLogIn">
+            <a href="/users/login" class="btn btn-primary">Log in</a>
+        </div>
+        {{/if}}
+
     </nav>
 </header>
